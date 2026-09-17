@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>S2X ADA Cube</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        overflow: hidden;
+        background: #111;
+      }
+      canvas {
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://unpkg.com/three@0.167.1/build/three.module.js",
+          "three/addons/": "https://unpkg.com/three@0.167.1/examples/jsm/"
+        }
+      }
+    </script>
+    <script type="module">
+      import * as THREE from "three";
+      import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+      import { FontLoader } from "three/addons/loaders/FontLoader.js";
+      import { TextGeometry } from "three/addons/geometries/TextGeometry.js";
+
+      const scene = new THREE.Scene();
+      scene.background = new THREE.Color(0x111111);
+
+      const camera = new THREE.PerspectiveCamera(
+        60,
+        window.innerWidth / window.innerHeight,
+        0.1,
+        100
+      );
+      camera.position.set(3, 3, 4);
+
+      const renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      document.body.appendChild(renderer.domElement);
+
+      const controls = new OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true;
+
+      scene.add(new THREE.AmbientLight(0xffffff, 0.7));
+      const keyLight = new THREE.DirectionalLight(0xffffff, 1.1);
+      keyLight.position.set(4, 6, 3);
+      scene.add(keyLight);
+
+      const cubeGroup = new THREE.Group();
+      scene.add(cubeGroup);
+
+      const outerSize = 2;
+      const half = outerSize / 2;
+      const holeRadius = 0.35;
+
+      const faceShape = new THREE.Shape();
+      faceShape.moveTo(-half, -half);
+      faceShape.lineTo(half, -half);
+      faceShape.lineTo(half, half);
+      faceShape.lineTo(-half, half);
+      faceShape.closePath();
+
+      const holePath = new THREE.Path();
+      holePath.absarc(0, 0, holeRadius, 0, Math.PI * 2, true);
+      faceShape.holes.push(holePath);
+
+      const cubeWithHoleGeometry = new THREE.ExtrudeGeometry(faceShape, {
+        depth: outerSize,
+        bevelEnabled: false,
+      });
+      cubeWithHoleGeometry.translate(0, 0, -half);
+
+      const cubeMaterial = new THREE.MeshStandardMaterial({
+        color: 0x3b82f6,
+        metalness: 0.15,
+        roughness: 0.45,
+      });
+      const cubeMesh = new THREE.Mesh(cubeWithHoleGeometry, cubeMaterial);
+      cubeGroup.add(cubeMesh);
+
+      const fontLoader = new FontLoader();
+      fontLoader.load(
+        "https://unpkg.com/three@0.167.1/examples/fonts/helvetiker_bold.typeface.json",
+        (font) => {
+          const textGeometry = new TextGeometry("S2X ADA", {
+            font,
+            size: 0.28,
+            depth: 0.08,
+            bevelEnabled: false,
+          });
+          textGeometry.computeBoundingBox();
+          const textWidth =
+            textGeometry.boundingBox.max.x - textGeometry.boundingBox.min.x;
+          textGeometry.translate(-textWidth / 2, 0, 0);
+
+          const textMaterial = new THREE.MeshStandardMaterial({ color: 0xffb703 });
+          const textMesh = new THREE.Mesh(textGeometry, textMaterial);
+          textMesh.position.set(0, half + 0.05, 0);
+          cubeGroup.add(textMesh);
+        }
+      );
+
+      window.addEventListener("resize", () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      });
+
+      const animate = () => {
+        controls.update();
+        renderer.render(scene, camera);
+        requestAnimationFrame(animate);
+      };
+      animate();
+    </script>
+  </body>
+</html>
