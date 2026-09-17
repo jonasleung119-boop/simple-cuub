@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Simple Cube</title>
+    <style>
+      :root {
+        --bg: #f8fafc;
+        --cube: #2563eb;
+        --text: #dc2626;
+        --hole: #0f172a;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        background: var(--bg);
+        font-family: Arial, sans-serif;
+      }
+
+      .group {
+        position: relative;
+        width: 220px;
+        height: 220px;
+      }
+
+      .label {
+        position: absolute;
+        top: 8px;
+        left: 50%;
+        transform: translateX(-50%);
+        margin: 0;
+        color: var(--text);
+        font-weight: 700;
+        letter-spacing: 0.08em;
+      }
+
+      .cube {
+        position: absolute;
+        bottom: 12px;
+        left: 50%;
+        width: 150px;
+        height: 150px;
+        transform: translateX(-50%);
+        background: var(--cube);
+        border-radius: 4px;
+      }
+
+      .hole {
+        position: absolute;
+        top: 0;
+        left: 50%;
+        width: 30px;
+        height: 100%;
+        transform: translateX(-50%);
+        background: var(--hole);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="group" role="img" aria-label="Blue cube with center through-hole and top text S2X ADA">
+      <p class="label">S2X ADA</p>
+      <div class="cube">
+        <div class="hole" aria-hidden="true"></div>
+      </div>
+    </div>
+  </body>
+</html>
